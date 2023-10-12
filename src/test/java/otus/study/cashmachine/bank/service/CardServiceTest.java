@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import otus.study.cashmachine.TestUtil;
 import otus.study.cashmachine.bank.dao.CardsDao;
+import otus.study.cashmachine.bank.data.Account;
 import otus.study.cashmachine.bank.data.Card;
 import otus.study.cashmachine.bank.service.impl.CardServiceImpl;
 
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class CardServiceTest {
@@ -31,7 +33,6 @@ public class CardServiceTest {
     void testCreateCard() {
         when(cardsDao.createCard("5555", 1L, "0123")).thenReturn(
                 new Card(1L, "5555", 1L, "0123"));
-
         Card newCard = cardService.createCard("5555", 1L, "0123");
         assertNotEquals(0, newCard.getId());
         assertEquals("5555", newCard.getNumber());
@@ -44,7 +45,6 @@ public class CardServiceTest {
         Card card = new Card(1L, "1234", 1L, TestUtil.getHash("0000"));
         when(cardsDao.getCardByNumber(anyString())).thenReturn(card);
         when(accountService.checkBalance(1L)).thenReturn(new BigDecimal(1000));
-
         BigDecimal sum = cardService.getBalance("1234", "0000");
         assertEquals(0, sum.compareTo(new BigDecimal(1000)));
     }
@@ -69,6 +69,27 @@ public class CardServiceTest {
 
     @Test
     void putMoney() {
+        String cardNumber = "1111";
+        String pin = "0000";
+        Card card = new Card(1, cardNumber, 1L,TestUtil.getHash(pin));
+        when(cardsDao.getCardByNumber(cardNumber)).thenReturn(card);
+        when(accountService.putMoney(any(), any())).thenReturn(new BigDecimal(123));
+        cardService.putMoney(cardNumber, pin, new BigDecimal(123));
+        verify(accountService).putMoney(1L, new BigDecimal(123));
+    }
+
+    @Test
+    void getCardException () {
+        String cardNumber = "1111";
+        String pin = "0000";
+        Card card = new Card(1, cardNumber, 1L,TestUtil.getHash(pin));
+        when(cardsDao.getCardByNumber(cardNumber)).thenReturn(card);
+        Exception exception = assertThrows (IllegalArgumentException.class, () -> {
+            cardService.putMoney(null, pin, new BigDecimal(123));
+        });
+        String expectedMessage = "No card found";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test

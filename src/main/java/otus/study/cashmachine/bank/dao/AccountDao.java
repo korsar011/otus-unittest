@@ -5,6 +5,8 @@ import otus.study.cashmachine.bank.db.Accounts;
 
 
 public class AccountDao {
+    public Object getAccount;
+
     public Account getAccount(Long accountId) {
         if (!Accounts.accounts.containsKey(accountId)) {
             throw new IllegalArgumentException("Account not found");

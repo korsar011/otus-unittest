@@ -1,5 +1,6 @@
 package otus.study.cashmachine.machine.service;
 
+import org.springframework.stereotype.Service;
 import otus.study.cashmachine.machine.data.CashMachine;
 
 import java.math.BigDecimal;

@@ -1,5 +1,6 @@
 package otus.study.cashmachine.machine.service.impl;
 
+import org.springframework.stereotype.Service;
 import otus.study.cashmachine.bank.service.AccountService;
 import otus.study.cashmachine.bank.service.CardService;
 import otus.study.cashmachine.machine.data.CashMachine;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 
 public class CashMachineServiceImpl implements CashMachineService {
 
